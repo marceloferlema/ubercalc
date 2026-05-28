@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Cuánto ganás manejando con Uber?</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f3ef;
+    --accent: #c8f04a;
+    --accent-dark: #a8d030;
+    --gray: #888;
+    --light: #e8e6e1;
+    --card-bg: #141414;
+    --card-border: #2a2a2a;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .nav-cta {
+    font-size: 13px;
+    color: var(--gray);
+    text-decoration: none;
+    border: 1px solid var(--card-border);
+    padding: 6px 14px;
+    border-radius: 999px;
+    transition: all 0.2s;
+  }
+  .nav-cta:hover { color: var(--white); border-color: #555; }
+
+  /* HERO */
+  .hero {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 2rem 2rem;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(200,240,74,0.08);
+    border: 1px solid rgba(200,240,74,0.2);
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero p {
+    font-size: 16px;
+    color: var(--gray);
+    max-width: 460px;
+    margin: 0 auto 2.5rem;
+  }
+
+  /* CALC CONTAINER */
+  .calc-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  /* TURNO TABS */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .tabs-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .tb {
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: transparent;
+    cursor: pointer;
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .tb:hover { color: var(--white); border-color: #555; }
+  .tb.on { background: var(--accent); color: var(--black); border-color: var(--accent); font-weight: 500; }
+
+  /* SLIDER SECTION */
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .section { margin-bottom: 2rem; }
+
+  .srow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1rem;
+  }
+  .slabel {
+    font-size: 14px;
+    color: #aaa;
+    width: 180px;
+    flex-shrink: 0;
+  }
+  .sval {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    min-width: 90px;
+    text-align: right;
+  }
+
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 2px;
+    background: var(--card-border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  /* NUMBER INPUTS */
+  .irow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 0.85rem;
+  }
+  .irow label {
+    font-size: 14px;
+    color: #aaa;
+    flex: 1;
+  }
+  .irow input[type=number] {
+    width: 110px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    outline: none;
+    text-align: right;
+    transition: border-color 0.15s;
+    -moz-appearance: textfield;
+  }
+  .irow input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .irow input[type=number]:focus { border-color: var(--accent); }
+
+  /* FUEL TABS */
+  .fuel-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 0.85rem;
+  }
+  .fuel-row label { font-size: 14px; color: #aaa; flex: 1; }
+  .fuel-tabs { display: flex; gap: 6px; }
+  .ftb {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: transparent;
+    cursor: pointer;
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .ftb:hover { color: var(--white); }
+  .ftb.on { background: var(--accent); color: var(--black); border-color: var(--accent); font-weight: 500; }
+
+  .fuel-note {
+    font-size: 12px;
+    color: #6a9a1a;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 0.85rem;
+    min-height: 18px;
+  }
+
+  /* RESULTS */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 2rem 0;
+  }
+  @media(min-width:500px) { .results-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .metric {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: border-color 0.2s;
+  }
+  .metric:first-child { border-color: rgba(200,240,74,0.3); }
+  .mlabel { font-size: 11px; color: var(--gray); margin-bottom: 6px; font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+  .mval { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--white); }
+  .mval.ok { color: var(--accent); font-size: 22px; }
+
+  /* BREAKDOWN */
+  .breakdown {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .br {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .bl { color: #999; }
+  .bv { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--white); }
+  .bv.neg { color: #e05a5a; }
+  .bv.pos { color: var(--accent); }
+  .bdiv { border: none; border-top: 1px solid var(--card-border); margin: 8px 0; }
+
+  /* CTA SECTION */
+  .cta-section {
+    background: var(--accent);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .cta-text h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .cta-text p { font-size: 14px; color: #3a4a10; }
+  .cta-btn {
+    background: var(--black);
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .cta-btn:hover { background: #1a1a1a; }
+
+  /* CAFECITO */
+  .cafecito {
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+  .cafecito-text { font-size: 13px; color: var(--gray); line-height: 1.5; }
+  .cafecito-text strong { color: #ccc; font-weight: 500; display: block; margin-bottom: 2px; }
+  .cafecito-btn {
+    background: transparent;
+    color: #f5a623;
+    border: 1px solid rgba(245,166,35,0.3);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .cafecito-btn:hover { background: rgba(245,166,35,0.08); border-color: #f5a623; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--card-border);
+    font-size: 12px;
+    color: #444;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero { animation: fadeUp 0.6s ease both; }
+  .calc-wrap { animation: fadeUp 0.6s 0.15s ease both; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">UBER / CALCULADORA</span>
+  <a href="https://drivers.uber.com/i/aw676ew" class="nav-cta" target="_blank">Registrarme →</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Herramienta gratuita</div>
+  <h1>¿Cuánto podés ganar<br>manejando con <em>Uber</em>?</h1>
+  <p>Calculá tu ingreso real según tus horarios y costos. Sin vueltas, sin letra chica.</p>
+</div>
+
+<div class="calc-wrap">
+
+  <!-- TURNO -->
+  <div class="section">
+    <div class="tabs">
+      <span class="tabs-label">Turno</span>
+      <button class="tb" onclick="cargar(4,3,2,this)">Part-time</button>
+      <button class="tb" onclick="cargar(6,5,2,this)">Medio tiempo</button>
+      <button class="tb on" onclick="cargar(8,6,3,this)">Full-time</button>
+    </div>
+
+    <p class="section-title">Tus horas</p>
+    <div class="srow">
+      <span class="slabel">Horas por día</span>
+      <input type="range" min="1" max="12" value="8" step="1" id="horas" oninput="calc()">
+      <span class="sval" id="horas-out">8 hs</span>
+    </div>
+    <div class="srow">
+      <span class="slabel">Días por semana</span>
+      <input type="range" min="1" max="7" value="6" step="1" id="dias" oninput="calc()">
+      <span class="sval" id="dias-out">6 días</span>
+    </div>
+    <div class="srow">
+      <span class="slabel">Viajes por hora</span>
+      <input type="range" min="1" max="4" value="3" step="1" id="viajes" oninput="calc()">
+      <span class="sval" id="viajes-out">3 viajes/h</span>
+    </div>
+  </div>
+
+  <!-- TARIFAS -->
+  <div class="section">
+    <p class="section-title">Tarifas — lo que ves en tu app</p>
+    <div class="irow">
+      <label>Cobro promedio por viaje ($)</label>
+      <input type="number" id="tarifa" value="4300" min="100" step="50" oninput="calc()">
+    </div>
+    <div class="irow">
+      <label>Cobro con tarifa de prioridad ($)</label>
+      <input type="number" id="tarifa-prio" value="3850" min="100" step="50" oninput="calc()">
+    </div>
+    <div class="irow">
+      <label>% de viajes con prioridad</label>
+      <input type="number" id="pct-prio" value="30" min="0" max="100" step="5" oninput="calc()">
+    </div>
+    <div class="irow">
+      <label>Bono promedio por viaje ($) <span style="font-size:11px;color:#666;font-family:'DM Mono',monospace">desafíos y bonos</span></label>
+      <input type="number" id="bono" value="400" min="0" step="50" oninput="calc()">
+    </div>
+  </div>
+
+  <!-- COMBUSTIBLE -->
+  <div class="section">
+    <p class="section-title">Combustible</p>
+    <div class="fuel-row">
+      <label>Tipo de combustible</label>
+      <div class="fuel-tabs">
+        <button class="ftb on" id="btn-nafta" onclick="setFuel('nafta')">Nafta súper</button>
+        <button class="ftb" id="btn-gnc" onclick="setFuel('gnc')">GNC</button>
+      </div>
+    </div>
+    <div id="row-nafta" class="irow">
+      <label>Precio nafta súper ($/litro)</label>
+      <input type="number" id="nafta" value="2100" min="500" step="50" oninput="calc()">
+    </div>
+    <div id="row-gnc" class="irow" style="display:none">
+      <label>Precio GNC ($/m³)</label>
+      <input type="number" id="gnc" value="750" min="100" step="25" oninput="calc()">
+    </div>
+    <p id="fuel-note" class="fuel-note"></p>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div class="results-grid">
+    <div class="metric"><div class="mlabel">POR DÍA</div><div class="mval" id="r-dia">—</div></div>
+    <div class="metric"><div class="mlabel">POR SEMANA</div><div class="mval" id="r-sem">—</div></div>
+    <div class="metric"><div class="mlabel">POR MES NETO</div><div class="mval ok" id="r-mes">—</div></div>
+    <div class="metric"><div class="mlabel">POR HORA</div><div class="mval" id="r-hora">—</div></div>
+  </div>
+
+  <!-- DESGLOSE -->
+  <div class="breakdown">
+    <div class="br"><span class="bl">Ingresos brutos mensuales</span><span class="bv" id="b-bruto">—</span></div>
+    <div class="br"><span class="bl" style="color:#6a9a1a">Bonos y desafíos mensuales</span><span class="bv pos" id="b-bonos">—</span></div>
+    <div class="br"><span class="bl" style="color:#e05a5a" id="lbl-comb">Combustible mensual (25%)</span><span class="bv neg" id="b-comb">—</span></div>
+    <div class="br"><span class="bl" style="color:#e05a5a">Mantenimiento (~4%)</span><span class="bv neg" id="b-mant">—</span></div>
+    <hr class="bdiv">
+    <div class="br"><span class="bl" style="color:var(--white);font-weight:500">Neto estimado mensual</span><span class="bv pos" id="b-neto">—</span></div>
+    <div id="gnc-saving-row" class="br" style="display:none">
+      <span class="bl" style="color:#6a9a1a">Ahorro vs nafta con GNC</span>
+      <span class="bv pos" id="b-saving">—</span>
+    </div>
+  </div>
+
+  <!-- CTA UBER -->
+  <div class="cta-section">
+    <div class="cta-text">
+      <h3>¿Te convencen los números?</h3>
+      <p>Registrate con mi link y desbloqueás el bono de bienvenida para nuevos conductores.</p>
+    </div>
+    <a href="https://drivers.uber.com/i/aw676ew" class="cta-btn" target="_blank">Registrarme con bono →</a>
+  </div>
+
+  <!-- CAFECITO -->
+  <div class="cafecito">
+    <div class="cafecito-text">
+      <strong>¿Te sirvió la calculadora?</strong>
+      Si querés invitarme un cafecito para mantener la herramienta actualizada, te lo agradezco.
+    </div>
+    <a href="https://cafecito.app/smartsoft" class="cafecito-btn" target="_blank">☕ Invitar un cafecito</a>
+  </div>
+
+</div>
+
+<footer>
+  Valores de referencia · mayo 2026 · CABA y GBA<br>
+  Los ingresos reflejan lo que Uber acredita al conductor. No garantizan resultados.
+</footer>
+
+<script>
+var fuelMode = 'nafta';
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('es-AR');
+}
+function v(id) {
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+function setFuel(mode) {
+  fuelMode = mode;
+  document.getElementById('btn-nafta').classList.toggle('on', mode === 'nafta');
+  document.getElementById('btn-gnc').classList.toggle('on', mode === 'gnc');
+  document.getElementById('row-nafta').style.display = mode === 'nafta' ? 'flex' : 'none';
+  document.getElementById('row-gnc').style.display = mode === 'gnc' ? 'flex' : 'none';
+  document.getElementById('gnc-saving-row').style.display = mode === 'gnc' ? 'flex' : 'none';
+  calc();
+}
+function calc() {
+  var horas = parseInt(document.getElementById('horas').value);
+  var dias = parseInt(document.getElementById('dias').value);
+  var viajesH = parseInt(document.getElementById('viajes').value);
+  var tarifa = v('tarifa');
+  var tarifaPrio = v('tarifa-prio');
+  var pctPrio = v('pct-prio') / 100;
+  var naftaP = v('nafta');
+  var gncP = v('gnc');
+
+  document.getElementById('horas-out').textContent = horas + ' hs';
+  document.getElementById('dias-out').textContent = dias + (dias === 1 ? ' día' : ' días');
+  document.getElementById('viajes-out').textContent = viajesH + (viajesH === 1 ? ' viaje/h' : ' viajes/h');
+
+  var tarifaEfectiva = tarifa * (1 - pctPrio) + tarifaPrio * pctPrio;
+  var viajesMes = viajesH * horas * dias * 4.3;
+  var brutoMes = viajesMes * tarifaEfectiva;
+  var bonoMes = v('bono') * viajesMes;
+
+  var combustMes = brutoMes * 0.25;
+
+  if (fuelMode === 'gnc') {
+    var naftaCostBase = brutoMes * 0.25;
+    var ratio = gncP / (naftaP * 1.1);
+    combustMes = naftaCostBase * ratio;
+    var saving = naftaCostBase - combustMes;
+    document.getElementById('b-saving').textContent = fmt(saving) + '/mes';
+    var pctSaving = Math.round((1 - ratio) * 100);
+    document.getElementById('fuel-note').textContent = 'Con los precios actuales, el GNC te cuesta un ' + pctSaving + '% menos que la nafta por km recorrido';
+  } else {
+    document.getElementById('fuel-note').textContent = '';
+  }
+
+  var mantMes = brutoMes * 0.04;
+  var neto = brutoMes + bonoMes - combustMes - mantMes;
+
+  document.getElementById('r-dia').textContent = fmt(neto / (dias * 4.3));
+  document.getElementById('r-sem').textContent = fmt(neto / 4.3);
+  document.getElementById('r-mes').textContent = fmt(neto);
+  document.getElementById('r-hora').textContent = fmt(neto / (horas * dias * 4.3));
+  document.getElementById('b-bruto').textContent = fmt(brutoMes);
+  document.getElementById('b-bonos').textContent = '+ ' + fmt(bonoMes);
+  document.getElementById('b-comb').textContent = '- ' + fmt(combustMes);
+  document.getElementById('b-mant').textContent = '- ' + fmt(mantMes);
+  document.getElementById('b-neto').textContent = fmt(neto);
+}
+function cargar(h, d, vj, btn) {
+  document.getElementById('horas').value = h;
+  document.getElementById('dias').value = d;
+  document.getElementById('viajes').value = vj;
+  document.querySelectorAll('.tb').forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  calc();
+}
+calc();
+</script>
+</body>
+</html>
