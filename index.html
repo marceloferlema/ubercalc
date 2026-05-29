@@ -395,15 +395,6 @@
   .calc-wrap { animation: fadeUp 0.6s 0.15s ease both; }
 </style>
 </head>
- <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-TQ5FC5QMKL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-TQ5FC5QMKL');
-</script>
 <body>
 
 <nav>
@@ -519,7 +510,30 @@
     </div>
     <a href="https://drivers.uber.com/i/aw676ew" class="cta-btn" target="_blank">Registrarme con bono →</a>
   </div>
- 
+
+
+  <!-- FORMULARIO SUGERENCIAS -->
+  <div style="border:1px solid #2a2a2a;border-radius:16px;padding:1.75rem 1.5rem;margin-bottom:1.5rem;">
+    <p style="font-size:16px;font-weight:500;color:#f5f3ef;margin-bottom:4px;">¿Tenés una sugerencia?</p>
+    <p style="font-size:13px;color:#888;margin-bottom:1.25rem;">Ayudame a mejorar la calculadora — cualquier dato, error o idea es bienvenida.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem;">
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <label style="font-size:11px;font-family:'DM Mono',monospace;color:#888;letter-spacing:0.05em;text-transform:uppercase;">Nombre</label>
+        <input type="text" id="f-nombre" placeholder="Tu nombre" style="background:#141414;border:1px solid #2a2a2a;color:#f5f3ef;font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;border-radius:8px;outline:none;width:100%;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <label style="font-size:11px;font-family:'DM Mono',monospace;color:#888;letter-spacing:0.05em;text-transform:uppercase;">Email</label>
+        <input type="email" id="f-email" placeholder="tu@email.com" style="background:#141414;border:1px solid #2a2a2a;color:#f5f3ef;font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;border-radius:8px;outline:none;width:100%;">
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;">
+      <label style="font-size:11px;font-family:'DM Mono',monospace;color:#888;letter-spacing:0.05em;text-transform:uppercase;">Mensaje</label>
+      <textarea id="f-mensaje" placeholder="Contame qué mejorarías o qué dato está desactualizado..." style="background:#141414;border:1px solid #2a2a2a;color:#f5f3ef;font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;border-radius:8px;outline:none;width:100%;min-height:90px;resize:vertical;"></textarea>
+    </div>
+    <button id="f-btn" onclick="enviarSugerencia()" style="background:#141414;color:#c8f04a;border:1px solid #c8f04a;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:10px 24px;border-radius:999px;cursor:pointer;width:100%;margin-top:0.5rem;transition:all 0.2s;">Enviar sugerencia →</button>
+    <p id="f-msg" style="font-size:13px;font-family:'DM Mono',monospace;margin-top:0.75rem;min-height:20px;text-align:center;"></p>
+  </div>
+
   <!-- CAFECITO -->
   <div class="cafecito">
     <div class="cafecito-text">
@@ -609,6 +623,55 @@ function cargar(h, d, vj, btn) {
   calc();
 }
 calc();
+
+
+async function enviarSugerencia() {
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var mensaje = document.getElementById('f-mensaje').value.trim();
+  var btn = document.getElementById('f-btn');
+  var msg = document.getElementById('f-msg');
+
+  if (!mensaje) {
+    msg.textContent = 'Por favor escribí tu sugerencia.';
+    msg.style.color = '#e05a5a';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  msg.textContent = '';
+
+  try {
+    var res = await fetch('https://tgeoveophggzvlgsnbue.supabase.co/rest/v1/sugerencias', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'sb_publishable_chmOIeJESC2NzEN1AQmynA_I-1oLcEW',
+        'Authorization': 'Bearer sb_publishable_chmOIeJESC2NzEN1AQmynA_I-1oLcEW',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ nombre: nombre, email: email, mensaje: mensaje, origen: 'ubercalc' })
+    });
+
+    if (res.ok || res.status === 201) {
+      msg.textContent = '✓ ¡Gracias! Tu sugerencia fue enviada.';
+      msg.style.color = '#c8f04a';
+      document.getElementById('f-nombre').value = '';
+      document.getElementById('f-email').value = '';
+      document.getElementById('f-mensaje').value = '';
+      btn.textContent = 'Enviado ✓';
+    } else {
+      throw new Error('Error ' + res.status);
+    }
+  } catch(e) {
+    msg.textContent = 'Hubo un error al enviar. Intentá de nuevo.';
+    msg.style.color = '#e05a5a';
+    btn.disabled = false;
+    btn.textContent = 'Enviar sugerencia →';
+  }
+}
+
 </script>
 </body>
 </html>
